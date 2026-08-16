@@ -236,7 +236,7 @@
                 case .explicit:
                     if let first = atoms.first {
                         switch first {
-                        case .literal(let bytes) where !bytes.isEmpty && bytes[0] == 0x2E /* . */:
+                        case .literal(let bytes) where !bytes.isEmpty && bytes[0] == 0x2E:
                             break
 
                         default:
@@ -427,7 +427,10 @@
         }
 
         /// Appends a path component using the canonical glob separator (`/`).
-        private static func appendPath(_ base: Swift.String, _ component: Swift.String) -> Swift.String {
+        private static func appendPath(
+            _ base: Swift.String,
+            _ component: Swift.String
+        ) -> Swift.String {
             if base.hasSuffix("/") || base.hasSuffix("\\") {
                 return base + component
             }

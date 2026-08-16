@@ -44,7 +44,8 @@
         var utf16 = Array(string.utf16)
         utf16.append(0)
         return utf16.withUnsafeBufferPointer { buffer in
-            buffer.baseAddress!.withMemoryRebound(to: WCHAR.self, capacity: buffer.count) { wcharPtr in
+            buffer.baseAddress!.withMemoryRebound(to: WCHAR.self, capacity: buffer.count) {
+                wcharPtr in
                 body(wcharPtr)
             }
         }
@@ -474,7 +475,8 @@
         func `Match non-existent directory throws notFound`() throws {
             let pattern = try Glob.Pattern("*.txt")
 
-            try Path.String.Scope()("C:/nonexistent/path/that/does/not/exist") { (dir: borrowing Path.Borrowed) in
+            try Path.String.Scope()("C:/nonexistent/path/that/does/not/exist") {
+                (dir: borrowing Path.Borrowed) in
                 do {
                     _ = try Glob.match(pattern: pattern, in: dir)
                     Issue.record("expected Glob.match to throw Glob.Error")

@@ -9,7 +9,7 @@ let package = Package(
         .iOS(.v26),
         .tvOS(.v26),
         .watchOS(.v26),
-        .visionOS(.v26)
+        .visionOS(.v26),
     ],
     products: [
         .library(
@@ -51,15 +51,42 @@ let package = Package(
         // swift-iso-9945 L2 to swift-glob-primitives L1, eliminating the
         // cross-platform asymmetry where swift-windows depended on a
         // POSIX-named package for platform-agnostic vocabulary.
-        .package(url: "https://github.com/swift-primitives/swift-glob-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-system-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-memory-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-random-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-equation-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-hash-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-error-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-path-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-clock-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-glob-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-system-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-memory-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-random-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-equation-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-hash-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-error-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-path-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-clock-primitives.git",
+            branch: "main"
+        ),
     ],
     targets: [
         // MARK: - Descriptor (L3-policy per [PLAT-ARCH-005])
@@ -115,7 +142,7 @@ let package = Package(
         .target(
             name: "Windows Kernel Clock",
             dependencies: [
-                .product(name: "Windows 32 Kernel Clock", package: "swift-windows-32"),
+                .product(name: "Windows 32 Kernel Clock", package: "swift-windows-32")
             ]
         ),
         // MARK: - File (L3-policy per [PLAT-ARCH-005] / [PLAT-ARCH-008e])
@@ -182,7 +209,7 @@ let package = Package(
         .target(
             name: "Windows Test Support",
             dependencies: [
-                "Windows Kernel",
+                "Windows Kernel"
             ],
             path: "Tests/Support"
         ),
