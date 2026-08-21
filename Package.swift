@@ -51,10 +51,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swift-microsoft/swift-windows-32.git", branch: "main"),
-        // Item 3.5 (closed 2026-05-02): Glob vocabulary relocated from
-        // swift-iso-9945 L2 to swift-glob-primitives L1, eliminating the
-        // cross-platform asymmetry where swift-windows depended on a
-        // POSIX-named package for platform-agnostic vocabulary.
+
         .package(
             url: "https://github.com/swift-primitives/swift-glob-primitives.git",
             branch: "main"
@@ -93,13 +90,7 @@ let package = Package(
         ),
     ],
     targets: [
-        // MARK: - Descriptor (L3-policy per [PLAT-ARCH-005])
-        //
-        // Hosts Windows.Kernel.Descriptor — the per-platform descriptor type
-        // that the swift-kernel typealias resolves to on Windows. Authorized
-        // by L1-types-only-no-exceptions Research doc (RECOMMENDATION,
-        // commit 0666a59 in swift-kernel-primitives) and platform-skill cycle
-        // 6cc4fde in swift-institute/Skills (revised PLAT-ARCH-005 / 008c / 015).
+
         .target(
             name: "Windows Kernel Descriptor",
             dependencies: [
@@ -124,11 +115,7 @@ let package = Package(
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
         ),
-        // MARK: - Socket (L3-policy per [PLAT-ARCH-005] / [PLAT-ARCH-008e])
-        //
-        // L3-policy re-export shim. Provides Windows.Kernel.Socket namespace and
-        // Windows.Kernel.Socket.Descriptor typealias for the three-tier chain
-        // L3-unifier (swift-kernel) → L3-policy (swift-windows) → L2 (swift-windows-32).
+
         .target(
             name: "Windows Kernel Socket",
             dependencies: [
@@ -137,27 +124,14 @@ let package = Package(
                 .product(name: "Windows 32 Kernel Socket", package: "swift-windows-32"),
             ]
         ),
-        // MARK: - Clock (L3-policy re-export per [PLAT-ARCH-008e])
-        //
-        // L3-policy re-export shim. Windows clock surface (Clock.Continuous.now,
-        // Clock.Suspending.now extending Clock_Primitives types) is exposed for
-        // swift-kernel's Kernel Clock target via the L3-policy product, not direct
-        // L2 reach.
+
         .target(
             name: "Windows Kernel Clock",
             dependencies: [
                 .product(name: "Windows 32 Kernel Clock", package: "swift-windows-32")
             ]
         ),
-        // MARK: - File (L3-policy per [PLAT-ARCH-005] / [PLAT-ARCH-008e])
-        //
-        // Tier 5-Windows-FOS+Affinity-Combined Phase 4 target (2026-05-02). Hosts
-        // the L3-policy `Windows.Kernel.File` typealias to L2-canonical
-        // `Windows.\`32\`.Kernel.File`, which transitively exposes the FOS triple
-        // (`Offset`/`Size`/`Delta`) recreated at L2 in Phase 2 (commit `cc5ff79`
-        // at swift-windows-32). Per principal Q2 disposition, declared as a
-        // per-domain target (NOT flat-umbrella merged into Windows Kernel) to
-        // keep the three-tier chain navigable per-domain.
+
         .target(
             name: "Windows Kernel File",
             dependencies: [
@@ -165,38 +139,16 @@ let package = Package(
                 .product(name: "Windows 32 Kernel File", package: "swift-windows-32"),
             ]
         ),
-        // MARK: - Lock (L3-policy per [PLAT-ARCH-005] / [PLAT-ARCH-008e])
-        //
-        // The Windows half of the converged `Kernel.Lock` byte-range locking
-        // surface. Mirrors swift-posix's "POSIX Kernel Lock" so that
-        // swift-kernel's L3-unifier can export one lock API on every
-        // platform, and portable callers never reach a host substrate
-        // directly.
+
         .target(
             name: "Windows Kernel Lock",
             dependencies: [
                 "Windows Kernel",
-                // The RAII `Token` lives in its own L2 target. It builds on the
-                // full matrix as of swift-windows-32 `main` (the
-                // `Clock.Continuous` access is inside the `os(Windows)` guard),
-                // so the policy tier aliases it like every other lock member.
+
                 .product(name: "Windows 32 Kernel Lock", package: "swift-windows-32"),
             ]
         ),
-        // MARK: - Thread (L3-policy per [PLAT-ARCH-005] / [PLAT-ARCH-008e])
-        //
-        // D1 unification (swift-foundations/swift-windows#2, 2026-07-31): hosts
-        // the L3-policy `Windows.Kernel.Thread` distinct empty enum plus its
-        // per-member typealiases to L2-canonical `Windows.\`32\`.Kernel.Thread`.
-        // The `Affinity.apply(_:)` dispatch method is superseded per D2 — kernel
-        // performs the affinity-kind switch and calls
-        // `Windows.\`32\`.Kernel.Thread.Affinity.setMask(cores:)` directly, so
-        // the `System Primitives` / `Error Primitives` / `Windows 32 Kernel
-        // System` dependencies that method alone required are removed. Per
-        // principal Q2 disposition, declared as a per-domain target (NOT
-        // flat-umbrella merged into Windows Kernel) to keep the three-tier chain
-        // L3-unifier (swift-kernel) → L3-policy (swift-windows) → L2 (swift-windows-32)
-        // navigable per-domain.
+
         .target(
             name: "Windows Kernel Thread",
             dependencies: [
@@ -205,22 +157,7 @@ let package = Package(
                 .product(name: "Windows 32 Kernel Thread", package: "swift-windows-32"),
             ]
         ),
-        // MARK: - Process (L3-policy per [PLAT-ARCH-005] / [PLAT-ARCH-008e])
-        //
-        // swift-process v2 Windows arc Phase C target. Hosts the L3-policy
-        // `Windows.Kernel.Process` typealias to L2-canonical
-        // `Windows.\`32\`.Kernel.Process` (containing Spawn / Actions / Result /
-        // Error / Exit). The three-tier chain on Windows:
-        //
-        //   Kernel.Process (L3-unifier swift-kernel)
-        //     → Windows.Kernel.Process (L3-policy here)
-        //       → Windows.\`32\`.Kernel.Process (L2 canonical swift-windows-32)
-        //
-        // Matches the existing L3 sibling pattern (e.g., Windows Kernel File):
-        // the typealias is gated behind #if os(Windows) and assumes the
-        // consumer reaches L3 `Windows.Kernel` via the Windows Kernel umbrella
-        // target's re-export when building on Windows. POSIX builds skip the
-        // typealias entirely.
+
         .target(
             name: "Windows Kernel Process",
             dependencies: [
@@ -246,9 +183,9 @@ let package = Package(
             name: "Windows Kernel Tests",
             dependencies: [
                 "Windows Kernel",
-                // [MOD-038] The Glob suites name Glob.Pattern / .Options / .Error directly.
+
                 .product(name: "Glob Primitives", package: "swift-glob-primitives"),
-                // [MOD-038] The suites bridge Swift.String → Path.Borrowed for Glob.match.
+
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
         ),

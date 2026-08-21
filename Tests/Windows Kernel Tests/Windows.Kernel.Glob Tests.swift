@@ -1,26 +1,10 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-windows open source project
-//
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-windows project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 #if os(Windows)
 
     import WinSDK
     import Testing
 
-    // [MOD-038] `Glob` is declared in L1 Glob_Primitives. The implementation file
-    // reaches it via `public import`, which permits the type in that module's public
-    // API signatures but does NOT re-export it — clients must import it themselves.
     import Glob_Primitives
 
-    // [MOD-038] Same SE-0409 shape: Glob.match takes `borrowing Path.Borrowed`
-    // (L1 Path_Primitives), which Windows_Kernel public-imports without re-export.
     import Path_Primitives
 
     @testable import Windows_Kernel
@@ -34,9 +18,6 @@
         }
     }
 
-    // MARK: - Test Fixture
-
-    /// Converts String to null-terminated UTF-16 for Win32 APIs.
     private func withWideString<R>(
         _ string: String,
         _ body: (UnsafePointer<WCHAR>) -> R
@@ -51,7 +32,6 @@
         }
     }
 
-    /// Extracts String from null-terminated WCHAR buffer.
     private func stringFromWideChars(_ buffer: UnsafePointer<WCHAR>, maxLength: Int) -> String {
         var length = 0
         while length < maxLength && buffer[length] != 0 {
@@ -61,7 +41,6 @@
         return String(decoding: wcharBuffer, as: UTF16.self)
     }
 
-    /// Recursively removes a directory and its contents.
     private func removeDirectoryRecursively(_ path: String) {
         let winPath = path.replacing("/", with: "\\")
         let searchPath = winPath + "\\*"
@@ -100,7 +79,6 @@
         }
     }
 
-    /// Gets the parent directory path.
     private func parentDirectory(of path: String) -> String {
         var components = path.split(separator: "/", omittingEmptySubsequences: false)
         if components.count > 1 {
@@ -109,18 +87,12 @@
         return components.joined(separator: "/")
     }
 
-    // MARK: - Fixtures ([TEST-032]: statics on the suite namespace, never free functions)
-
     extension Glob.Test {
-        /// Runs `body` with a freshly created temporary directory, vending the
-        /// typed borrowed path — the shape `Glob.match` takes — alongside its
-        /// String form for building expectation paths. The directory tree is
-        /// removed afterwards. A path-conversion failure surfaces as itself
-        /// (`Path.String.Error`), never remapped.
+
         static func withTemporaryDirectory(
             _ body: (borrowing Path.Borrowed, _ string: Swift.String) throws -> Void
         ) throws {
-            // Get temp path
+
             var tempPathBuffer = [WCHAR](repeating: 0, count: Int(MAX_PATH) + 1)
             let tempPathLen = GetTempPathW(DWORD(tempPathBuffer.count), &tempPathBuffer)
             guard tempPathLen > 0 else {
@@ -128,18 +100,12 @@
             }
             let tempPath = stringFromWideChars(tempPathBuffer, maxLength: Int(tempPathLen))
 
-            // Create unique directory name. pid+ticks alone is NOT unique: Swift
-            // Testing runs suites in parallel and GetTickCount64's ~15ms resolution
-            // made concurrent tests collide on the same name (every traversal test
-            // failed on CreateDirectoryW at da2e791's Windows leg, all reporting the
-            // SAME directory). A random component makes each invocation distinct.
             let pid = GetCurrentProcessId()
             let ticks = GetTickCount64()
             let unique = UInt64.random(in: .min ... .max)
             let testDir = tempPath + "glob-test-\(pid)-\(ticks)-\(unique)"
             let winTestDir = testDir.replacing("/", with: "\\")
 
-            // Create directory
             let created = withWideString(winTestDir) { wpath in
                 CreateDirectoryW(wpath, nil)
             }
@@ -151,14 +117,12 @@
                 removeDirectoryRecursively(testDir)
             }
 
-            // Use forward slashes for cross-platform API
             let posixPath = testDir.replacing("\\", with: "/")
             try Path.String.Scope()(posixPath) { (dir: borrowing Path.Borrowed) in
                 try body(dir, posixPath)
             }
         }
 
-        /// Creates files and directories in the test directory.
         static func createTestFiles(in directory: Swift.String) throws {
             let files = [
                 "file1.txt",
@@ -178,12 +142,10 @@
                 let winPath = fullPath.replacing("/", with: "\\")
                 let dirPath = parentDirectory(of: fullPath).replacing("/", with: "\\")
 
-                // Create parent directory if needed
                 withWideString(dirPath) { wpath in
                     _ = CreateDirectoryW(wpath, nil)
                 }
 
-                // Create file
                 let handle = withWideString(winPath) { wpath in
                     CreateFileW(
                         wpath,
@@ -201,8 +163,6 @@
             }
         }
     }
-
-    // MARK: - Basic Match Tests
 
     extension Glob.Test.Unit {
         @Test
@@ -274,8 +234,6 @@
         }
     }
 
-    // MARK: - Double Star Tests
-
     extension Glob.Test.Unit {
         @Test
         func `Match double star recursive`() throws {
@@ -308,8 +266,6 @@
         }
     }
 
-    // MARK: - Character Class Tests
-
     extension Glob.Test.Unit {
         @Test
         func `Match character class`() throws {
@@ -325,8 +281,6 @@
             }
         }
     }
-
-    // MARK: - Options Tests
 
     extension Glob.Test.Unit {
         @Test
@@ -400,7 +354,7 @@
         @Test
         func `Case insensitive matching`() throws {
             try Glob.Test.withTemporaryDirectory { dir, dirString in
-                // Create a file with uppercase
+
                 let upperPath = dirString + "/FILE.TXT"
                 let winPath = upperPath.replacing("/", with: "\\")
                 let handle = withWideString(winPath) { wpath in
@@ -426,8 +380,6 @@
             }
         }
     }
-
-    // MARK: - Include/Exclude Tests
 
     extension Glob.Test.Unit {
         @Test
@@ -468,8 +420,6 @@
         }
     }
 
-    // MARK: - Error Tests
-
     extension Glob.Test.Unit {
         @Test
         func `Match non-existent directory throws notFound`() throws {
@@ -481,8 +431,7 @@
                     _ = try Glob.match(pattern: pattern, in: dir)
                     Issue.record("expected Glob.match to throw Glob.Error")
                 } catch {
-                    // typed throws: `error` here is statically Glob.Error — reaching
-                    // this catch IS the pass condition.
+
                     _ = error
                 }
             }
@@ -496,14 +445,11 @@
                 let pattern = try Glob.Pattern("**/*.txt")
                 let options = Glob.Options(onError: .skip)
 
-                // Should not throw, gracefully handles any errors
                 let results = try Glob.match(pattern: pattern, in: dir, options: options)
                 #expect(results.count >= 2)
             }
         }
     }
-
-    // MARK: - Edge Cases
 
     extension Glob.Test.`Edge Case` {
         @Test
@@ -529,8 +475,6 @@
         }
     }
 
-    // MARK: - Windows-Specific Tests
-
     extension Glob.Test.Unit {
         @Test
         func `Path normalization outputs forward slashes`() throws {
@@ -540,7 +484,6 @@
                 let pattern = try Glob.Pattern("*.txt")
                 let results = try Glob.match(pattern: pattern, in: dir)
 
-                // All paths should use forward slashes
                 for path in results {
                     #expect(!path.contains("\\"), "Path should use forward slashes: \(path)")
                 }

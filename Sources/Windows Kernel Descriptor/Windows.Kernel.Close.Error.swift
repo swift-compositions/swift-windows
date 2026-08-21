@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-windows open source project
-//
-// Copyright (c) 2024 Coen ten Thije Boonkkamp and the swift-windows project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 public import Error_Primitives
 
 #if os(Windows)
@@ -41,10 +30,5 @@ public import Error_Primitives
             }
         }
     }
-
-// MARK: - Platform Bindings
-//
-// Per [PLAT-ARCH-008c], the platform-specific `init(code:)` mapping lives
-// in L2 (`swift-windows-standard`).
 
 #endif

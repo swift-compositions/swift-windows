@@ -1,50 +1,17 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-windows open source project
-//
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-windows project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 #if os(Windows)
 
     public import Glob_Primitives
     internal import Windows_32_Kernel_File
 
-    // MARK: - Windows Glob Implementation (extends Glob)
-    //
-    // Wave 4a-Glob (Item 3 of post-Path-X cycles, 2026-05-01):
-    // - [PLAT-ARCH-008j] violation closed: WinSDK calls relocated to L2
-    //   `Windows.\`32\`.Kernel.File.Find` typed primitives.
-    // - Namespace switched from `Windows.Kernel.Glob` (was undeclared at L3)
-    //   to top-level `Glob` (relocated to L1 swift-glob-primitives per Item 3.5; mirrors POSIX-side L3-policy at swift-posix).
-    // - Signature aligned with POSIX-side: `match(pattern:in:options:body:)`
-    //   takes `borrowing Path.Borrowed` + body closure `(Swift.String) -> Void`.
-    // - Glob vocabulary types (Pattern, Segment, Atom, Options, Error) reached
-    //   via `internal import Glob_Primitives` — relocated from L2
-    //   `ISO_9945.Kernel.Glob` to L1 top-level `Glob` per Item 3.5 (closed
-    //   2026-05-02), eliminating the cross-platform asymmetry where this
-    //   Windows-side L3 file used to depend on a POSIX-named package.
-
     extension Glob {
-        /// Matches files using a glob pattern (Windows implementation),
-        /// yielding each match to the body closure.
-        ///
-        /// Streams results directly — no intermediate collection. Each matched
-        /// path is yielded as it is found during directory traversal.
+
         public static func match(
             pattern: Glob.Pattern,
             in directory: borrowing Path.Borrowed,
             options: Options = .init(),
             body: (Swift.String) -> Void
         ) throws(Error) {
-            // Path.Char is UInt16 (UTF-16) on Windows — decode the code units.
-            // Reading this buffer as an 8-bit C string truncates "C:\…" at the
-            // first NUL high byte (notFound(path: "C")); that readout is a fossil
-            // of this file's UTF-8/CChar POSIX-named ancestor.
+
             let directoryString = unsafe Swift.String(
                 decoding: UnsafeBufferPointer(start: directory.pointer, count: directory.count),
                 as: UTF16.self
@@ -73,7 +40,6 @@
             }
         }
 
-        /// Matches files using multiple patterns with exclusions, yielding each match.
         public static func match(
             include: [Pattern],
             excluding: [Pattern] = [],
@@ -106,7 +72,6 @@
             }
         }
 
-        /// Convenience: matches files using a glob pattern, returning collected results.
         public static func match(
             pattern: Glob.Pattern,
             in directory: borrowing Path.Borrowed,
@@ -117,8 +82,6 @@
             return results
         }
 
-        /// Convenience: matches files using multiple patterns with exclusions,
-        /// returning collected results.
         public static func match(
             include: [Pattern],
             excluding: [Pattern] = [],
@@ -133,10 +96,8 @@
         }
     }
 
-    // MARK: - Private Implementation
-
     extension Glob {
-        /// Recursively matches segments against the filesystem, yielding each match.
+
         private static func matchSegments(
             _ segments: [Segment],
             segmentIndex: Int,
@@ -185,7 +146,7 @@
                 }
 
             case .doubleStar:
-                // ** matches zero or more path segments
+
                 try matchSegments(
                     segments,
                     segmentIndex: segmentIndex + 1,
@@ -219,7 +180,6 @@
             }
         }
 
-        /// Matches atoms against a filename.
         private static func matchAtoms(
             _ atoms: [Atom],
             against name: Swift.String,
@@ -257,7 +217,6 @@
             )
         }
 
-        /// Recursive atom matching with backtracking for *.
         private static func matchAtomsRecursive(
             _ atoms: [Atom],
             atomIndex: Int,
@@ -333,7 +292,6 @@
             }
         }
 
-        /// ASCII case folding (A-Z to a-z).
         private static func foldCase(_ scalar: Unicode.Scalar) -> Unicode.Scalar {
             let value = scalar.value
             if value >= 0x41 && value <= 0x5A {
@@ -342,7 +300,6 @@
             return scalar
         }
 
-        /// Checks if a name should be skipped based on dotfile policy.
         private static func shouldSkipDotfile(
             _ name: Swift.String,
             options: Options,
@@ -364,19 +321,14 @@
         }
     }
 
-    // MARK: - Filesystem Helpers (compose typed L2 Windows.`32`.Kernel.File.Find)
-
     extension Glob {
-        /// A typed view of one file-find entry: name plus directory/reparse-point flags.
+
         private typealias DirectoryEntry = (
             name: Swift.String,
             isDirectory: Bool,
             isReparsePoint: Bool
         )
 
-        /// Lists directory entries with their typed attributes via L2
-        /// `Windows.\`32\`.Kernel.File.Find`. The L2 Handle is RAII —
-        /// `FindClose` runs automatically on deinit.
         private static func listDirectoryWithAttributes(
             _ path: Swift.String,
             options: Options
@@ -410,12 +362,10 @@
             return entries
         }
 
-        /// Checks if a path exists via L2 `Windows.\`32\`.Kernel.File.pathExists`.
         private static func pathExists(_ path: Swift.String) -> Bool {
             Windows.`32`.Kernel.File.pathExists(windowsPath(path))
         }
 
-        /// Checks if entry is a traversable directory.
         private static func isTraversableDirectory(
             isDirectory: Bool,
             isReparsePoint: Bool,
@@ -426,7 +376,6 @@
             return true
         }
 
-        /// Appends a path component using the canonical glob separator (`/`).
         private static func appendPath(
             _ base: Swift.String,
             _ component: Swift.String
@@ -437,10 +386,6 @@
             return base + "/" + component
         }
 
-        /// Converts cross-platform path to Windows path.
-        ///
-        /// Preserves `\\?\` extended-length prefix and converts UNC patterns
-        /// (`//server/share`) to Windows form (`\\server\share`).
         private static func windowsPath(_ path: Swift.String) -> Swift.String {
             if path.hasPrefix("\\\\?\\") {
                 return path
@@ -451,7 +396,6 @@
             return path.replacing("/", with: "\\")
         }
 
-        /// Converts Windows path to cross-platform glob path (`/` separator).
         private static func posixPath(_ path: Swift.String) -> Swift.String {
             if path.hasPrefix("\\\\?\\") {
                 return path
@@ -460,11 +404,8 @@
         }
     }
 
-    // MARK: - Error Mapping
-
     extension Glob {
-        /// Maps L2 `Windows.\`32\`.Kernel.File.Find.Error` to typed L1 Glob.Error
-        /// (preserving the iso-9945 stable error categories).
+
         private static func mapFindError(
             _ error: Windows.`32`.Kernel.File.Find.Error,
             path: Swift.String
