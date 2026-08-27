@@ -23,7 +23,7 @@ Type-safe, policy-free wrappers around Windows kernel syscalls for Swift. Provid
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-foundations/swift-windows.git", from: "0.1.0")
+    .package(url: "https://github.com/swift-compositions/swift-windows.git", from: "0.1.0")
 ]
 ```
 
@@ -106,7 +106,7 @@ descriptor is representative:
 Windows.Kernel.Close.Error
 ├── .handle(Windows.32.Kernel.Descriptor.Validity.Error)  // invalid handle
 ├── .io(Windows.32.Kernel.IO.Error)                       // underlying I/O failure
-└── .platform(Error_Primitives.Error)                     // raw platform error
+└── .platform(Error.Error)                     // raw platform error
 ```
 
 ```swift
@@ -131,7 +131,7 @@ do {
 
 ### Used By
 
-- [swift-io](https://github.com/swift-foundations/swift-io): Async I/O executor built on kernel primitives
+- [swift-io](https://github.com/swift-compositions/swift-io): Async I/O executor built on kernel primitives
 
 ---
 

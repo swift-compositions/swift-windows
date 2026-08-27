@@ -1,6 +1,6 @@
 #if os(Windows)
 
-    public import Glob_Primitives
+    public import Glob
     internal import Windows_32_Kernel_File
 
     extension Glob {

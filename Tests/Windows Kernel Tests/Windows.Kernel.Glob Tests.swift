@@ -3,9 +3,9 @@
     import WinSDK
     import Testing
 
-    import Glob_Primitives
+    import Glob
 
-    import Path_Primitives
+    import Path
 
     @testable import Windows_Kernel
 

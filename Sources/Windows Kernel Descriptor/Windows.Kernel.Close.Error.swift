@@ -1,4 +1,4 @@
-public import Error_Primitives
+public import Error
 
 #if os(Windows)
 
@@ -6,7 +6,7 @@ public import Error_Primitives
         public enum Error: Swift.Error, Sendable {
             case handle(Windows.`32`.Kernel.Descriptor.Validity.Error)
             case io(Windows.`32`.Kernel.IO.Error)
-            case platform(Error_Primitives.Error)
+            case platform(Error.Error)
         }
     }
 

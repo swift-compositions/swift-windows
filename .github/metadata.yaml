@@ -2,7 +2,7 @@
 # Triaged by AI-assisted bulk pass (2026-04-29).
 description: "Type-safe, policy-free wrappers around Windows kernel syscalls for Swift."
 topics:
-  - foundations
+  - compositions
   - windows
 homepage: "https://swift-institute.org"
 readme:

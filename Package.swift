@@ -53,39 +53,39 @@ let package = Package(
         .package(url: "https://github.com/swift-microsoft/swift-windows-32.git", branch: "main"),
 
         .package(
-            url: "https://github.com/swift-primitives/swift-glob-primitives.git",
+            url: "https://github.com/swift-molecules/swift-glob.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-system-primitives.git",
+            url: "https://github.com/swift-molecules/swift-system.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-memory-primitives.git",
+            url: "https://github.com/swift-molecules/swift-memory.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-random-primitives.git",
+            url: "https://github.com/swift-molecules/swift-random.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-equation-primitives.git",
+            url: "https://github.com/swift-molecules/swift-equation.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-hash-primitives.git",
+            url: "https://github.com/swift-molecules/swift-hash.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-error-primitives.git",
+            url: "https://github.com/swift-molecules/swift-error.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-path-primitives.git",
+            url: "https://github.com/swift-molecules/swift-path.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-clock-primitives.git",
+            url: "https://github.com/swift-molecules/swift-clock.git",
             branch: "main"
         ),
     ],
@@ -95,9 +95,9 @@ let package = Package(
             name: "Windows Kernel Descriptor",
             dependencies: [
                 .product(name: "Windows 32 Kernel", package: "swift-windows-32"),
-                .product(name: "Error Primitives", package: "swift-error-primitives"),
-                .product(name: "Equation Primitives", package: "swift-equation-primitives"),
-                .product(name: "Hash Primitives", package: "swift-hash-primitives"),
+                .product(name: "Error", package: "swift-error"),
+                .product(name: "Equation", package: "swift-equation"),
+                .product(name: "Hash", package: "swift-hash"),
             ]
         ),
         .target(
@@ -106,13 +106,13 @@ let package = Package(
                 "Windows Kernel Descriptor",
                 .product(name: "Windows 32 Kernel", package: "swift-windows-32"),
                 .product(name: "Windows 32 Kernel File", package: "swift-windows-32"),
-                .product(name: "Glob Primitives", package: "swift-glob-primitives"),
-                .product(name: "Clock Primitives", package: "swift-clock-primitives"),
-                .product(name: "Error Primitives", package: "swift-error-primitives"),
-                .product(name: "Memory Primitives", package: "swift-memory-primitives"),
-                .product(name: "Random Primitives", package: "swift-random-primitives"),
-                .product(name: "System Primitives", package: "swift-system-primitives"),
-                .product(name: "Path Primitives", package: "swift-path-primitives"),
+                .product(name: "Glob", package: "swift-glob"),
+                .product(name: "Clock", package: "swift-clock"),
+                .product(name: "Error", package: "swift-error"),
+                .product(name: "Memory", package: "swift-memory"),
+                .product(name: "Random", package: "swift-random"),
+                .product(name: "System", package: "swift-system"),
+                .product(name: "Path", package: "swift-path"),
             ]
         ),
 
@@ -184,9 +184,9 @@ let package = Package(
             dependencies: [
                 "Windows Kernel",
 
-                .product(name: "Glob Primitives", package: "swift-glob-primitives"),
+                .product(name: "Glob", package: "swift-glob"),
 
-                .product(name: "Path Primitives", package: "swift-path-primitives"),
+                .product(name: "Path", package: "swift-path"),
             ]
         ),
     ],

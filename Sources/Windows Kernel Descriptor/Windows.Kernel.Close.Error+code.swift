@@ -1,4 +1,4 @@
-public import Error_Primitives
+public import Error
 public import Windows_32_Kernel
 
 #if os(Windows)
@@ -6,7 +6,7 @@ public import Windows_32_Kernel
     extension Windows.Kernel.Close.Error {
 
         @inlinable
-        public init(code: Error_Primitives.Error.Code) {
+        public init(code: Error.Error.Code) {
             if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: code) {
                 self = .handle(e)
                 return
@@ -15,7 +15,7 @@ public import Windows_32_Kernel
                 self = .io(e)
                 return
             }
-            self = .platform(Error_Primitives.Error(code: code))
+            self = .platform(Error.Error(code: code))
         }
     }
 #endif
