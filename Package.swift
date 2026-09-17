@@ -69,14 +69,6 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-equation.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-hash.git",
-            branch: "main"
-        ),
-        .package(
             url: "https://github.com/swift-molecules/swift-error.git",
             branch: "main"
         ),
@@ -96,8 +88,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Windows 32 Kernel", package: "swift-windows-32"),
                 .product(name: "Error", package: "swift-error"),
-                .product(name: "Equation", package: "swift-equation"),
-                .product(name: "Hash", package: "swift-hash"),
             ]
         ),
         .target(
