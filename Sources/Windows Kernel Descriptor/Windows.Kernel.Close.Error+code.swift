@@ -6,7 +6,7 @@ public import Windows_32_Kernel
     extension Windows.Kernel.Close.Error {
 
         @inlinable
-        public init(code: Error.Error.Code) {
+        public init(code: Error::Error.Code) {
             if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: code) {
                 self = .handle(e)
                 return
