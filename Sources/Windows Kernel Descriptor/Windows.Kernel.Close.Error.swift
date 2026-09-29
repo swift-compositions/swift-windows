@@ -6,7 +6,7 @@ public import Error
         public enum Error: Swift.Error, Sendable {
             case handle(Windows.`32`.Kernel.Descriptor.Validity.Error)
             case io(Windows.`32`.Kernel.IO.Error)
-            case platform(Error.Error)
+            case platform(Error::Error)
         }
     }
 

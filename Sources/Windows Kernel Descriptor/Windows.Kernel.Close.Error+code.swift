@@ -15,7 +15,7 @@ public import Windows_32_Kernel
                 self = .io(e)
                 return
             }
-            self = .platform(Error.Error(code: code))
+            self = .platform(Error::Error(code: code))
         }
     }
 #endif
