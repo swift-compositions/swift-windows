@@ -54,7 +54,7 @@ let package = Package(
 
         .package(
             url: "https://github.com/swift-atoms/swift-glob.git",
-            branch: "main"
+            branch: "main", traits: ["Parser"]
         ),
         .package(
             url: "https://github.com/swift-atoms/swift-system.git",
