@@ -101,7 +101,7 @@ let package = Package(
                 .product(name: "Error", package: "swift-error"),
                 .product(name: "Memory", package: "swift-memory"),
                 .product(name: "Random", package: "swift-random"),
-                .product(name: "System", package: "swift-system"),
+                .product(name: "System Primitives", package: "swift-system"),
                 .product(name: "Path", package: "swift-path"),
             ]
         ),
