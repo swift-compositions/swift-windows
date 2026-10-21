@@ -194,15 +194,14 @@
                     break
 
                 case .explicit:
-                    if let first = atoms.first {
-                        switch first {
-                        case .literal(let bytes) where !bytes.isEmpty && bytes[0] == 0x2E:
-                            break
+                    guard let first = atoms.first else {
+                        return false
+                    }
+                    switch first {
+                    case .literal(let bytes) where !bytes.isEmpty && bytes[0] == 0x2E:
+                        break
 
-                        default:
-                            return false
-                        }
-                    } else {
+                    default:
                         return false
                     }
                 }
@@ -295,7 +294,7 @@
         private static func foldCase(_ scalar: Unicode.Scalar) -> Unicode.Scalar {
             let value = scalar.value
             if value >= 0x41 && value <= 0x5A {
-                return Unicode.Scalar(value + 0x20)!
+                return Unicode.Scalar(UInt8(truncatingIfNeeded: value + 0x20))
             }
             return scalar
         }
