@@ -58,10 +58,6 @@ let package = Package(
             traits: ["Parser"]
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-system.git",
-            branch: "main"
-        ),
-        .package(
             url: "https://github.com/swift-atoms/swift-memory.git",
             branch: "main"
         ),
@@ -102,7 +98,6 @@ let package = Package(
                 .product(name: "Error", package: "swift-error"),
                 .product(name: "Memory", package: "swift-memory"),
                 .product(name: "Random", package: "swift-random"),
-                .product(name: "System Primitives", package: "swift-system"),
                 .product(name: "Path", package: "swift-path"),
             ]
         ),
