@@ -1,5 +1,5 @@
-public import Error
-public import Windows_32_Kernel
+import Error
+import Windows_32_Kernel
 
 #if os(Windows)
 

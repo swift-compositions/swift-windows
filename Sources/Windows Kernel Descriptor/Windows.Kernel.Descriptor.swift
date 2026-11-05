@@ -1,6 +1,5 @@
-@_spi(Syscall) public import Windows_32_Kernel
-
 #if os(Windows)
+    @_spi(Syscall) public import Windows_32_Kernel
 
     extension Windows.Kernel {
 

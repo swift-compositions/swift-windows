@@ -1,4 +1,4 @@
-public import Error
+import Error
 
 #if os(Windows)
 

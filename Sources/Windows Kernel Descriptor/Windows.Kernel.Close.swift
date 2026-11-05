@@ -1,4 +1,4 @@
-public import Windows_32_Kernel
+import Windows_32_Kernel
 
 #if os(Windows)
 
