@@ -90,7 +90,7 @@ let package = Package(
         .target(
             name: "Windows Kernel",
             dependencies: [
-                "Windows Kernel Descriptor",
+                .target(name: "Windows Kernel Descriptor"),
                 .product(name: "Windows 32 Kernel", package: "swift-windows-32"),
                 .product(name: "Windows 32 Kernel File", package: "swift-windows-32"),
                 .product(name: "Glob", package: "swift-glob"),
@@ -105,8 +105,8 @@ let package = Package(
         .target(
             name: "Windows Kernel Socket",
             dependencies: [
-                "Windows Kernel",
-                "Windows Kernel Descriptor",
+                .target(name: "Windows Kernel"),
+                .target(name: "Windows Kernel Descriptor"),
                 .product(name: "Windows 32 Kernel Socket", package: "swift-windows-32"),
             ]
         ),
@@ -121,7 +121,7 @@ let package = Package(
         .target(
             name: "Windows Kernel File",
             dependencies: [
-                "Windows Kernel",
+                .target(name: "Windows Kernel"),
                 .product(name: "Windows 32 Kernel File", package: "swift-windows-32"),
             ]
         ),
@@ -129,7 +129,7 @@ let package = Package(
         .target(
             name: "Windows Kernel Lock",
             dependencies: [
-                "Windows Kernel",
+                .target(name: "Windows Kernel"),
 
                 .product(name: "Windows 32 Kernel Lock", package: "swift-windows-32"),
             ]
@@ -138,7 +138,7 @@ let package = Package(
         .target(
             name: "Windows Kernel Thread",
             dependencies: [
-                "Windows Kernel",
+                .target(name: "Windows Kernel"),
                 .product(name: "Windows 32 Kernel", package: "swift-windows-32"),
                 .product(name: "Windows 32 Kernel Thread", package: "swift-windows-32"),
             ]
@@ -147,28 +147,28 @@ let package = Package(
         .target(
             name: "Windows Kernel Process",
             dependencies: [
-                "Windows Kernel",
+                .target(name: "Windows Kernel"),
                 .product(name: "Windows 32 Kernel Process", package: "swift-windows-32"),
             ]
         ),
         .target(
             name: "Windows Test Support",
             dependencies: [
-                "Windows Kernel"
+                .target(name: "Windows Kernel")
             ],
             path: "Tests/Support"
         ),
         .testTarget(
             name: "Windows Kernel File Tests",
             dependencies: [
-                "Windows Kernel File",
+                .target(name: "Windows Kernel File"),
                 .product(name: "Windows 32 Kernel File", package: "swift-windows-32"),
             ]
         ),
         .testTarget(
             name: "Windows Kernel Tests",
             dependencies: [
-                "Windows Kernel",
+                .target(name: "Windows Kernel"),
 
                 .product(name: "Glob", package: "swift-glob"),
 
