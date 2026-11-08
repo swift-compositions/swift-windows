@@ -1,6 +1,6 @@
-@_exported public import Random
-@_exported public import Windows_32_Kernel
-@_exported public import Windows_Kernel_Descriptor
+public import Random
+public import Windows_32_Kernel
+public import Windows_Kernel_Descriptor
 
 public typealias Kernel = Windows.Kernel
 
