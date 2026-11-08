@@ -3,9 +3,9 @@
     import Windows_32_Kernel_File
     import Windows_Kernel_File
 
-enum `Windows.Kernel.File.Seek Tests` {}
+    enum `Windows.Kernel.File.Seek Tests` {}
 
-extension `Windows.Kernel.File.Seek Tests` {
+    extension `Windows.Kernel.File.Seek Tests` {
         @Suite struct `Windows Kernel File Tests` {
             @Test func `Seek has its L2 owner type`() {
                 func assertOwner<T>(_ facade: T.Type, _ owner: T.Type) {}
@@ -16,5 +16,5 @@ extension `Windows.Kernel.File.Seek Tests` {
                 )
             }
         }
-}
+    }
 #endif
